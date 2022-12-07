@@ -58,8 +58,8 @@ class LogRegModel(tf.Module):
 
 class TrainingLoop(tf.Module):
   def __init__(self):
-    self.losses = {'train':[], 'test':[], 'val':[]}
-    self.accs = {'train':[], 'test':[], 'val':[]}
+    self.losses = {'train':[], 'val':[], 'test':[]}
+    self.accs = {'train':[], 'val':[], 'test':[]}
     self.model = None
     self.num_epochs = 200
     return
@@ -71,8 +71,8 @@ class TrainingLoop(tf.Module):
 
     print("Training Started...")
     for epoch in range(self.num_epochs):
-      batch_losses = {'train':[], 'test':[]} # track loss values across each batch
-      batch_accs = {'train':[], 'test':[]} # track accuracy scores across each batch
+      batch_losses = {'train':[], 'val':[], 'test':[]}# track loss values across each batch
+      batch_accs = {'train':[], 'val':[], 'test':[]} # track accuracy scores across each batch
 
       # Iterate through training data via batches
       for x_batch, y_batch in train_data:
@@ -96,30 +96,39 @@ class TrainingLoop(tf.Module):
         batch_loss = log_loss(y_pred_batch, y_batch) # loss value for this particular batch
         batch_acc = accuracy(y_pred_batch, y_batch) # accuracy score for this particular batch
 
-        ## Track test performance
-        batch_losses['test'].append(batch_loss)
-        batch_accs['test'].append(batch_acc)
+        ## Track validation performance
+        batch_losses['val'].append(batch_loss)
+        batch_accs['val'].append(batch_acc)
       
       # Track model performance per each epoch
       self.losses['train'].append( tf.reduce_mean(batch_losses['train']) )
       self.accs['train'].append( tf.reduce_mean(batch_accs['train']) )
 
-      self.losses['test'].append( tf.reduce_mean(batch_losses['test']) )
-      self.accs['test'].append( tf.reduce_mean(batch_accs['test']) )
+      self.losses['val'].append( tf.reduce_mean(batch_losses['val']) )
+      self.accs['val'].append( tf.reduce_mean(batch_accs['val']) )
 
       # Track progress via output
       if epoch % (self.num_epochs / 10) == 0: # print 10 progress reports in total
         print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
-      elif epoch == num_epochs-1:
-          print("...Complete.")
-          print("–"*30)
-          print("Final Scores:")
-          print(f"Training Loss: {self.losses['train'][-1]:.5}")
-          print(f"Test Loss: {self.losses['test'][-1]:.5}")
-          print(f"Training Accuracy: {self.accs['train'][-1]:.5}")
-          print(f"Test Accuracy: {self.accs['test'][-1]:.5}")
+      print("...Complete.")
+      print("–"*30)
       
+    
+    # Iterate through test data via batches
+    for x_batch, y_batch in test_data:
+      y_pred_batch = self.model(x_batch)
+      batch_losses['test'].append(log_loss(y_pred=y_pred_batch, y=y_batch))
+      batch_accs['test'].append(accuracy(y_pred=y_pred_batch, y=y_batch))
     return
+
+    self.losses['test'].append(tf.math.reduce_mean(batch_losses['test']))
+    self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
+    
+    print("Final Scores:")
+    print("{:^25}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
+    print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1]:.5, self.losses['val'][-1]:.5, self.losses['test'][-1]:.5))
+    print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1]:.5, self.accs['val'][-1]:.5, self.accs['test'][-1]:.5))
+
   
   def plot(self):
     print("Plotting...")
