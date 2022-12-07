@@ -126,8 +126,8 @@ class TrainingLoop(tf.Module):
     
     print("Final Scores:")
     print("{:^25}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
-    print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1]:.5, self.losses['val'][-1]:.5, self.losses['test'][-1]:.5))
-    print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1]:.5, self.accs['val'][-1]:.5, self.accs['test'][-1]:.5))
+    print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
+    print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
   
   def plot(self):
