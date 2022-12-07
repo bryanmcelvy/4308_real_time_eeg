@@ -25,7 +25,7 @@ def accuracy(y_pred, y_true):
   return acc
 
 
-def confusion(y_true, y_pred, class_labels={0:0, 1:1}):
+def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
   ''' 
   This method computes the normalized confusion matrix for the inputted data\n
   y_true – True values of y (0 or 1)\n
@@ -35,7 +35,9 @@ def confusion(y_true, y_pred, class_labels={0:0, 1:1}):
   fig.set_size_inches(w=15, h=5)
 
   # Normalized confusion matrix
-  con_mat = confusion_matrix(y_true=y_true.numpy(), y_pred=y_pred.numpy()) / con_mat.sum(axis=1)
+  con_mat = confusion_matrix(y_true=y_true.numpy(), y_pred=y_pred.numpy())
+  con_mat = con_mat.sum(axis=1)
+  
   axs[0] = heatmap(con_mat, 
             xticklabels=[class_labels[0], class_labels[1]], 
             yticklabels=[class_labels[0], class_labels[1]],
