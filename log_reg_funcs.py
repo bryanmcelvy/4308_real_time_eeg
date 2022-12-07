@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from sklearn.metric import confusion_matrix
+from sklearn.metrics import confusion_matrix
 from seaborn import heatmap
 
 ''' Functions '''
