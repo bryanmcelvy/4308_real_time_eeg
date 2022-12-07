@@ -5,10 +5,10 @@ from sklearn.metrics import confusion_matrix
 from seaborn import heatmap
 
 ''' Functions '''
-def log_loss(y_pred, y):
+def log_loss(y_pred, y_true):
   ''' This function computes the loss function, quantifying the similarity
   between the predicted probability and actual value '''
-  cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(labels=y, logits=y_pred)
+  cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(labels=y_true, logits=y_pred)
   return tf.reduce_mean(cross_entropy)
 
 
@@ -104,7 +104,7 @@ class TrainingLoop(tf.Module):
       for x_batch, y_batch in train_data:
         with tf.GradientTape() as tape:
           y_pred_batch = self.model(x_batch) # predictions from one particular batch
-          batch_loss = log_loss(y_pred=y_pred_batch, y=y_batch) # loss value for this particular batch
+          batch_loss = log_loss(y_pred=y_pred_batch, y_true=y_batch) # loss value for this particular batch
         batch_acc = accuracy(y_pred_batch, y_batch) # accuracy score for this particular batch
 
         ## Update variables via gradient descent
@@ -143,8 +143,8 @@ class TrainingLoop(tf.Module):
     # Iterate through test data via batches
     for x_batch, y_batch in test_data:
       y_pred_batch = self.model(x_batch)
-      batch_losses['test'].append(log_loss(y_pred=y_pred_batch, y=y_batch))
-      batch_accs['test'].append(accuracy(y_pred=y_pred_batch, y=y_batch))
+      batch_losses['test'].append(log_loss(y_pred=y_pred_batch, y_true=y_batch))
+      batch_accs['test'].append(accuracy(y_pred=y_pred_batch, y_true=y_batch))
     
     self.losses['test'].append(tf.math.reduce_mean(batch_losses['test']))
     self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
