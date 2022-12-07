@@ -27,8 +27,8 @@ class Normalizer(tf.Module):
   ''' This class performs normalization on an inputted dataset via z-scoring'''
   def __init__(self, data):
     # Initialize mean and standard deviation
-    self.mean = tf.Variable(tf.math.reduce_mean(data, axis=0))
-    self.std = tf.Variable(tf.math.reduce_std(data, axis=0))
+    self.mean = tf.Variable(tf.math.reduce_mean(data))
+    self.std = tf.Variable(tf.math.reduce_std(data))
 
   def norm(self, data):
     ''' This method normalizes the input data '''
