@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from sklearn.metric import confusion_matrix
+from seaborn import heatmap
 
 ''' Functions '''
 def log_loss(y_pred, y):
@@ -15,12 +17,34 @@ def predict(y_pred, threshold=0.5):
   return tf.cast(y_pred > threshold, dtype = tf.float32) # Returns 1 if above threshold, else 0
 
 
-def accuracy(y_pred, y):
+def accuracy(y_pred, y_true):
   ''' This function quantifies model accuracy by comparing predicted and actual output values '''
   y_pred = predict(tf.math.sigmoid(y_pred))
-  eq = tf.cast(y_pred == y, tf.float32) # Returns tensor with idx where predicted and actual values match
+  eq = tf.cast(y_pred == y_true, tf.float32) # Returns tensor with idx where predicted and actual values match
   acc = tf.reduce_mean(eq) # Accuracy value = average num of correct predictions
   return acc
+
+
+def confusion(y_true, y_pred, class_labels={0:0, 1:1}):
+  ''' 
+  This method computes the normalized confusion matrix for the inputted data\n
+  y_true – True values of y (0 or 1)\n
+  y_pred – Model-predicted values of y (0 or 1)\n
+  '''
+  fig, axs = plt.subplots(1,2)
+  fig.set_size_inches(w=15, h=5)
+
+  # Normalized confusion matrix
+  con_mat = confusion_matrix(y_true=y_true.numpy(), y_pred=y_pred.numpy()) / con_mat.sum(axis=1)
+  axs[0] = heatmap(con_mat, 
+            xticklabels=[class_labels[0], class_labels[1]], 
+            yticklabels=[class_labels[0], class_labels[1]],
+            cmap='Blue', annot=True, fmt='.4f', square=True
+            )
+  axs[0].set_title("Confusion Matrix")
+  axs[0].set_xlabel('Predicted')
+  axs[0].set_ylabel('Actual')
+
 
 ''' Classes '''
 class Normalizer(tf.Module):
@@ -43,7 +67,7 @@ class LogRegModel(tf.Module):
   def __init__(self):
     return
 
-  def __call__(self, x):
+  def __call__(self, x, train=True):
     # Executes when object is called
     # x – m x n tensor
     # Randomize weight/bias values from a uniform distribution
@@ -53,7 +77,9 @@ class LogRegModel(tf.Module):
     self.b = tf.Variable(bias, name='b')
     y_pred = tf.matmul(x, self.W) + self.b # m x 1
     y_pred = tf.squeeze(y_pred, axis=-1) # m
-    return y_pred
+    
+    if train == True: return y_pred
+    else: return tf.sigmoid(y_pred)
 
 
 class TrainingLoop(tf.Module):
@@ -61,14 +87,14 @@ class TrainingLoop(tf.Module):
     self.losses = {'train':[], 'val':[], 'test':[]}
     self.accs = {'train':[], 'val':[], 'test':[]}
     self.model = None
-    self.num_epochs = 200
+    self.num_epochs = 0
     return
 
-  def train(self, train_data, test_data, num_epochs=None, learn_rate=0.01, model=None):
+  def train(self, train_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False):
     ''' This function runs the training loop on the inputted training data '''
     self.model = LogRegModel() if model is None else model
-    self.num_epochs = num_epochs if num_epochs is not None else self.num_epochs
-
+    self.num_epochs = num_epochs
+    
     print("Training Started...")
     for epoch in range(self.num_epochs):
       batch_losses = {'train':[], 'val':[], 'test':[]}# track loss values across each batch
@@ -128,11 +154,11 @@ class TrainingLoop(tf.Module):
     print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
     print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
-    return
+    if output == True: return self.model
   
   
   def plot(self):
-    print("Plotting...")
+    print("Plotting...\n")
     
     fig, axs = plt.subplots(1,2)
     fig.set_size_inches(w=15,h=5)
@@ -142,6 +168,7 @@ class TrainingLoop(tf.Module):
     axs[0].plot(np.arange(self.num_epochs), self.losses['val'], label='Validation Loss', color = 'r')
 
     axs[0].legend()
+    axs[0].grid()
     axs[0].set_title('Log Loss vs. Epoch')
     axs[0].set_xlabel('Epoch')
     axs[0].set_ylabel('Log Loss')
@@ -152,9 +179,10 @@ class TrainingLoop(tf.Module):
     axs[1].plot(np.arange(self.num_epochs), self.accs['val'], label='Validation Accuracy', color = 'r')
 
     axs[1].legend()
+    axs[0].grid()
     axs[1].set_title('Accuracy vs. Epoch')
     axs[1].set_xlabel('Epoch')
     axs[1].set_ylabel('Accuracy (%)')
     axs[1].set_xlim([0, self.num_epochs])
-    
-    return
+
+  
