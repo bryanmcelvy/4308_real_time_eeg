@@ -110,25 +110,26 @@ class TrainingLoop(tf.Module):
       # Track progress via output
       if epoch % (self.num_epochs / 10) == 0: # print 10 progress reports in total
         print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
-      print("...Complete.")
-      print("–"*30)
-      
     
+    print("...Complete.")
+    print("–"*30)
+      
     # Iterate through test data via batches
     for x_batch, y_batch in test_data:
       y_pred_batch = self.model(x_batch)
       batch_losses['test'].append(log_loss(y_pred=y_pred_batch, y=y_batch))
       batch_accs['test'].append(accuracy(y_pred=y_pred_batch, y=y_batch))
-    return
-
+    
     self.losses['test'].append(tf.math.reduce_mean(batch_losses['test']))
     self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
-    
+      
     print("Final Scores:")
     print("{:^25}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
     print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
     print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
+    return
+  
   
   def plot(self):
     print("Plotting...")
