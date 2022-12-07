@@ -41,7 +41,7 @@ def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
   axs[0] = heatmap(con_mat, 
             xticklabels=[class_labels[0], class_labels[1]], 
             yticklabels=[class_labels[0], class_labels[1]],
-            cmap='Blue', annot=True, fmt='.4f', square=True
+            cmap='inferno', annot=True, fmt='.4f', square=True
             )
   axs[0].set_title("Confusion Matrix")
   axs[0].set_xlabel('Predicted')
