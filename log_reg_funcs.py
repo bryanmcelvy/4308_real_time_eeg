@@ -166,8 +166,8 @@ class TrainingLoop(tf.Module):
     fig.set_size_inches(w=15,h=5)
 
     # Plot log loss throughout each epoch
-    axs[0].plot(np.arange(self.num_epochs), self.losses['train'], label='Training Loss', color = 'b')
-    axs[0].plot(np.arange(self.num_epochs), self.losses['val'], label='Validation Loss', color = 'r')
+    axs[0].plot(np.arange(self.num_epochs), 100*np.array(self.losses['train']), label='Training Loss', color = 'b')
+    axs[0].plot(np.arange(self.num_epochs), 100*np.array(self.losses['val']), label='Validation Loss', color = 'r')
 
     axs[0].legend()
     axs[0].grid()
@@ -177,8 +177,8 @@ class TrainingLoop(tf.Module):
     axs[0].set_xlim([0, self.num_epochs])
 
     # Plot accuracy throughout each epoch
-    axs[1].plot(np.arange(self.num_epochs), self.accs['train'], label='Training Accuracy', color = 'b')
-    axs[1].plot(np.arange(self.num_epochs), self.accs['val'], label='Validation Accuracy', color = 'r')
+    axs[1].plot(np.arange(self.num_epochs), 100*np.array(self.accs['train']), label='Training Accuracy', color = 'b')
+    axs[1].plot(np.arange(self.num_epochs), 100*np.array(self.accs['val']), label='Validation Accuracy', color = 'r')
 
     axs[1].legend()
     axs[0].grid()
