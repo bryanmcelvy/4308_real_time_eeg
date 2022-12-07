@@ -36,7 +36,7 @@ def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
 
   # Normalized confusion matrix
   con_mat = confusion_matrix(y_true=y_true.numpy(), y_pred=y_pred.numpy())
-  con_mat /= con_mat.sum(axis=1)
+  con_mat = con_mat / con_mat.sum(axis=1)
   
   axs[0] = heatmap(con_mat, 
             xticklabels=[class_labels[0], class_labels[1]], 
@@ -160,7 +160,7 @@ class TrainingLoop(tf.Module):
   
   
   def plot(self):
-    print("Plotting...\n")
+    print("Plotting...", end='')
     
     fig, axs = plt.subplots(1,2)
     fig.set_size_inches(w=15,h=5)
@@ -186,5 +186,7 @@ class TrainingLoop(tf.Module):
     axs[1].set_xlabel('Epoch')
     axs[1].set_ylabel('Accuracy (%)')
     axs[1].set_xlim([0, self.num_epochs])
+    
+    print("Done.")
 
   
