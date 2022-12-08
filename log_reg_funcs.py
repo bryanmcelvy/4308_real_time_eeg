@@ -140,7 +140,7 @@ class TrainingLoop(tf.Module):
       # Track progress via output
       if epoch % (self.num_epochs / 10) == 0: # print 10 progress reports in total
         # print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
-        print("{:<.3}{:^25.4}{:^25.4}".format(epoch, self.losses['train'][-1], self.accs['train'][-1]))
+        print("{:<.3}{:^25.4}{:^25.4}".format(str(epoch), self.losses['train'][-1], self.accs['train'][-1]))
     
     print("...Complete.")
     print("–"*30)
