@@ -92,12 +92,14 @@ class TrainingLoop(tf.Module):
     self.num_epochs = 0
     return
 
-  def train(self, train_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False):
+  def train(self, train_data, val_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False):
     ''' This function runs the training loop on the inputted training data '''
     self.model = LogRegModel() if model is None else model
     self.num_epochs = num_epochs
     
-    print("Training Started...")
+    print("Training Started...\n–"*30)
+    print("{:<}{:^25}{:^25}".format("Epoch", "Loss", "Accuracy"))
+    
     for epoch in range(self.num_epochs):
       batch_losses = {'train':[], 'val':[], 'test':[]}# track loss values across each batch
       batch_accs = {'train':[], 'val':[], 'test':[]} # track accuracy scores across each batch
@@ -118,8 +120,8 @@ class TrainingLoop(tf.Module):
         batch_losses['train'].append(batch_loss)
         batch_accs['train'].append(batch_acc)
 
-      # Iterate through test data via batches
-      for x_batch, y_batch in test_data:
+      # Iterate through validation data via batches
+      for x_batch, y_batch in val_data:
         y_pred_batch = self.model(x_batch) # predictions from one particular batch
         batch_loss = log_loss(y_pred_batch, y_batch) # loss value for this particular batch
         batch_acc = accuracy(y_pred_batch, y_batch) # accuracy score for this particular batch
@@ -137,7 +139,8 @@ class TrainingLoop(tf.Module):
 
       # Track progress via output
       if epoch % (self.num_epochs / 10) == 0: # print 10 progress reports in total
-        print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
+        # print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
+        print("{:<}{:^25.4}{:^25.4}".format(epoch, self.losses['train'][-1], self.accs['train'][-1]))
     
     print("...Complete.")
     print("–"*30)
@@ -152,9 +155,9 @@ class TrainingLoop(tf.Module):
     self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
       
     print("Final Scores:")
-    print("{:^25}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
-    print("{:^25}{:^25}{:^25}{:^25}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
-    print("{:^25}{:^25}{:^25}{:^25}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
+    print("{:<}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
+    print("{:<.4}{:^25.4}{:^25.4}{:^25.4}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
+    print("{:<.4}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
     if output == True: return self.model
   
