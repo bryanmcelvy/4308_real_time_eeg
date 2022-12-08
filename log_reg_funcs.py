@@ -31,21 +31,20 @@ def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
   y_true – True values of y (0 or 1)\n
   y_pred – Model-predicted values of y (0 or 1)\n
   '''
-  fig, axs = plt.subplots(1,2)
-  fig.set_size_inches(w=15, h=5)
+  fig, ax = plt.subplots(1, 1, figsize=[7.5,7.5])
 
   # Normalized confusion matrix
   con_mat = confusion_matrix(y_true=y_true.numpy(), y_pred=y_pred.numpy())
   con_mat = con_mat / con_mat.sum(axis=1)
   
-  axs[0] = heatmap(con_mat, 
+  ax = heatmap(con_mat, 
             xticklabels=[class_labels[0], class_labels[1]], 
             yticklabels=[class_labels[0], class_labels[1]],
             cmap='inferno', annot=True, fmt='.4f', square=True
             )
-  axs[0].set_title("Confusion Matrix")
-  axs[0].set_xlabel('Predicted')
-  axs[0].set_ylabel('Actual')
+  ax.set_title("Confusion Matrix")
+  ax.set_xlabel('Predicted')
+  ax.set_ylabel('Actual')
 
 
 ''' Classes '''
