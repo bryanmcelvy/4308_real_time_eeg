@@ -96,7 +96,8 @@ class TrainingLoop(tf.Module):
     self.model = LogRegModel() if model is None else model
     self.num_epochs = num_epochs
     
-    print("Training Started...\n–"*30)
+    print("Training Started...")
+    print("–"*30)
     print("{:<}{:^25}{:^25}".format("Epoch", "Loss", "Accuracy"))
     
     for epoch in range(self.num_epochs):
@@ -139,7 +140,7 @@ class TrainingLoop(tf.Module):
       # Track progress via output
       if epoch % (self.num_epochs / 10) == 0: # print 10 progress reports in total
         # print(f"Epoch: {epoch}\tLoss: {self.losses['train'][-1]:4.4}\tAccuracy: {self.accs['train'][-1]:4.4}")
-        print("{:<}{:^25.4}{:^25.4}".format(epoch, self.losses['train'][-1], self.accs['train'][-1]))
+        print("{:<.3}{:^25.4}{:^25.4}".format(epoch, self.losses['train'][-1], self.accs['train'][-1]))
     
     print("...Complete.")
     print("–"*30)
@@ -154,9 +155,9 @@ class TrainingLoop(tf.Module):
     self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
       
     print("Final Scores:")
-    print("{:<}{:^25}{:^25}{:^25}".format("Metric", "Training", "Validation", "Test"))
-    print("{:<.4}{:^25.4}{:^25.4}{:^25.4}".format("Loss:", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
-    print("{:<.4}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
+    print("{:<}{:^25}{:^25}{:^25}".format("Metric  ", "Training", "Validation", "Test"))
+    print("{:<}{:^25.4}{:^25.4}{:^25.4}".format("Loss:   ", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
+    print("{:<}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
     if output == True: return self.model
   
