@@ -25,7 +25,7 @@ def accuracy(y_pred, y_true):
   return acc
 
 
-def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
+def confusion(y_pred, y_true, class_labels={0:0, 1:1}, title = "Training"):
   ''' 
   This method computes the normalized confusion matrix for the inputted data\n
   y_true – True values of y (0 or 1)\n
@@ -42,7 +42,7 @@ def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
             yticklabels=[class_labels[0], class_labels[1]],
             cmap='inferno', annot=True, fmt='.4f', square=True
             )
-  ax.set_title("Confusion Matrix")
+  ax.set_title(f"Confusion Matrix – {title}")
   ax.set_xlabel('Predicted')
   ax.set_ylabel('Actual')
   return con_mat
