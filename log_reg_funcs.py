@@ -45,6 +45,7 @@ def confusion(y_pred, y_true, class_labels={0:0, 1:1}):
   ax.set_title("Confusion Matrix")
   ax.set_xlabel('Predicted')
   ax.set_ylabel('Actual')
+  return con_mat
 
 
 ''' Classes '''
