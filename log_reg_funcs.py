@@ -157,8 +157,8 @@ class TrainingLoop(tf.Module):
       
     print("Final Scores:")
     print("{:<}{:^25}{:^25}{:^25}".format("Metric  ", "Training", "Validation", "Test"))
-    print("{:<}{:^25.4}{:^25.4}{:^25.4}".format("Loss:   ", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
-    print("{:<}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
+    print("{:<3}{:^25.4}{:^25.4}{:^25.4}".format("Loss:   ", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
+    print("{:<3}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
     if output == True: return self.model
   
