@@ -92,7 +92,7 @@ class TrainingLoop(tf.Module):
     self.num_epochs = 0
     return
 
-  def train(self, train_data, val_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False):
+  def train(self, train_data, val_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False, tboard=False):
     ''' This function runs the training loop on the inputted training data '''
     self.model = LogRegModel() if model is None else model
     self.num_epochs = num_epochs
@@ -152,13 +152,14 @@ class TrainingLoop(tf.Module):
       batch_losses['test'].append(log_loss(y_pred=y_pred_batch, y_true=y_batch))
       batch_accs['test'].append(accuracy(y_pred=y_pred_batch, y_true=y_batch))
     
+    # Track model performance
     self.losses['test'].append(tf.math.reduce_mean(batch_losses['test']))
     self.accs['test'].append(tf.math.reduce_mean(batch_accs['test']))
       
     print("Final Scores:")
     print("{:<}{:^25}{:^25}{:^25}".format("Metric  ", "Training", "Validation", "Test"))
-    print("{:<3}{:^25.4}{:^25.4}{:^25.4}".format("Loss:   ", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
-    print("{:<3}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
+    print("{:<5}{:^25.4}{:^25.4}{:^25.4}".format("Loss:   ", self.losses['train'][-1], self.losses['val'][-1], self.losses['test'][-1]))
+    print("{:<5}{:^25.4}{:^25.4}{:^25.4}".format("Accuracy:", self.accs['train'][-1], self.accs['val'][-1], self.accs['test'][-1]))
 
     if output == True: return self.model
   
