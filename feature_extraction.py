@@ -8,10 +8,10 @@ def findArea(x):
     ''' This function finds the area under the wave for a given time series `x` of window size `W`'''
     area = 0
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     W = len(x)
     
-    for i in np.linspace(start=0, stop=W-1, num=W, dtype=int):
+    for i in np.arange(W, dtype=int):
         area += abs(x[i])
     
     area /= W
@@ -28,20 +28,21 @@ def findNormDecay(x):
     a (+) or (-) derivative for a time series `x` with window size `W` '''
     D = 0 # normalized decay
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     W = len(x)
     
     for i in np.linspace(start=1, stop=W-2, num=W-2, dtype=int):
-        D += indicatorFunc(x[i], x[i+1]) - 0.5
+        D += indicatorFunc(x[i], x[i+1])
     
-    D = abs( D / (W-1) )
+    D = D / (W-1)
+    D = abs(D - 0.5)
     return D
 
 def findLineLength(x):
     ''' This function sums the distance between all consecutive readings within a time series `x` of window size `W` '''
     l = 0 # line length
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     W = len(x)
     
     for i in np.linspace(start=0, stop=W-1, num=W, dtype=int):
@@ -53,7 +54,7 @@ def findMeanEnergy(x):
     ''' This function finds the mean energy of a time series `x` with window size `W` '''
     E = 0 # mean energy
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     W = len(x)
     
     if W > 0:
@@ -68,7 +69,7 @@ def findAvgPeakAmp(x):
     ''' This function finds the avg. amplitude of the `K` peaks present in time series `x` '''
     P_A = 0
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10)
     K = len(peaks)
     
@@ -85,7 +86,7 @@ def findAvgValleyAmp(x):
     ''' This function finds the avg. amplitude of the `V` valleys present in time series `x` '''
     V_A = 0
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     valleys, _ = signal.find_peaks(x=-x, prominence=150, distance=10)
     V = len(valleys)
     
@@ -103,7 +104,7 @@ def findNormPeakNum(x):
     avg. difference between readings within time series `x` with window size `W` '''
     N_P = 0 # peak num
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10)
     W = len(x)
     K = len(peaks)
@@ -121,7 +122,7 @@ def findPeakVariation(x):
     for a time series `x`. The feature with the smallest length is used for comparisons.'''
     P_V = 0
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10) # idx of peaks in x
     valleys, _ = signal.find_peaks(x=-x, prominence=150, distance=10) # idx of valleys in x
     K = len(peaks)
@@ -162,7 +163,7 @@ def findRootMeanSquare(x):
     ''' This function finds the sqrt of the mean of the squared data points from time series `x` with window size `W` '''
     rms = 0
     
-    if isinstance(x,Series): x = x.to_numpy()
+    x = np.array(x)
     W = len(x)
     
     if W > 0:
@@ -172,3 +173,18 @@ def findRootMeanSquare(x):
         rms = np.sqrt(rms/W)
         return rms
     else: return 0 # returns 0 if there are no peaks (K=0)
+    
+''' Perform all functions '''
+def extractFeatures(x):
+    ''' This function returns the feature vector for the given time series data '''
+    feature_vector = np.array([0 for _ in range(9)])
+    feature_vector[0] = findArea(x)
+    feature_vector[1] = findNormDecay(x)
+    feature_vector[2] = findLineLength(x)
+    feature_vector[3] = findMeanEnergy(x)
+    feature_vector[4] = findAvgPeakAmp(x)
+    feature_vector[5] = findAvgValleyAmp(x)
+    feature_vector[6] = findNormPeakNum(x)
+    feature_vector[7] = findPeakVariation(x)
+    feature_vector[8] = findRootMeanSquare(x)
+    return feature_vector
