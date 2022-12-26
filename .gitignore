@@ -1,11 +1,5 @@
 /.idea
-/EEG_test.ipynb
-/log_res_tutorial.ipynb
 /project.ipynb
-dataset.csv
-fft_practice.py
-dataset_all.csv
-data.csv
-scratch.py
-eeg_filter_practice.py
-patient_all_no_filtering
+test_files
+output
+datasets
