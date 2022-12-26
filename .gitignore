@@ -7,3 +7,4 @@ fft_practice.py
 dataset_all.csv
 data.csv
 scratch.py
+eeg_filter_practice.py
