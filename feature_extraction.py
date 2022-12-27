@@ -24,8 +24,9 @@ def indicatorFunc(x0,x1):
     else: return 0
 
 def findNormDecay(x):
-    ''' This function finds the chance corrected fraction of data has 
-    a (+) or (-) derivative for a time series `x` with window size `W` '''
+    '''This function finds the chance corrected fraction of data has 
+    a (+) or (-) derivative for a time series `x` with window size `W`
+    '''
     D = 0 # normalized decay
     
     x = np.array(x)
@@ -41,13 +42,11 @@ def findNormDecay(x):
 def findLineLength(x):
     ''' This function sums the distance between all consecutive readings within a time series `x` of window size `W` '''
     l = 0 # line length
-    
     x = np.array(x)
     W = len(x)
     
-    for i in np.linspace(start=0, stop=W-1, num=W, dtype=int):
+    for i in np.arange(W-1, dtype=int):
         l += abs(x[i]-x[i-1])
-    
     return l
 
 def findMeanEnergy(x):
@@ -70,7 +69,7 @@ def findAvgPeakAmp(x):
     P_A = 0
     
     x = np.array(x)
-    peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10)
+    peaks, _ = signal.find_peaks(x=x, prominence=10, distance=1)
     K = len(peaks)
     
     if K > 0:
@@ -87,7 +86,7 @@ def findAvgValleyAmp(x):
     V_A = 0
     
     x = np.array(x)
-    valleys, _ = signal.find_peaks(x=-x, prominence=150, distance=10)
+    valleys, _ = signal.find_peaks(x=-x, prominence=10, distance=1)
     V = len(valleys)
     
     if V > 0:
@@ -105,7 +104,7 @@ def findNormPeakNum(x):
     N_P = 0 # peak num
     
     x = np.array(x)
-    peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10)
+    peaks, _ = signal.find_peaks(x=x, prominence=10, distance=1)
     W = len(x)
     K = len(peaks)
     if K > 0:
@@ -123,8 +122,8 @@ def findPeakVariation(x):
     P_V = 0
     
     x = np.array(x)
-    peaks, _ = signal.find_peaks(x=x, prominence=150, distance=10) # idx of peaks in x
-    valleys, _ = signal.find_peaks(x=-x, prominence=150, distance=10) # idx of valleys in x
+    peaks, _ = signal.find_peaks(x=x, prominence=10, distance=1) # idx of peaks in x
+    valleys, _ = signal.find_peaks(x=-x, prominence=10, distance=1) # idx of valleys in x
     K = len(peaks)
     V = len(valleys)
     
