@@ -17,9 +17,9 @@ def predict(y_pred, threshold=0.5):
   return tf.cast(y_pred > threshold, dtype = tf.float32) # Returns 1 if above threshold, else 0
 
 
-def accuracy(y_pred, y_true):
+def accuracy(y_pred, y_true, threshold=0.5):
   ''' This function quantifies model accuracy by comparing predicted and actual output values '''
-  y_pred = predict(tf.math.sigmoid(y_pred))
+  y_pred = predict(tf.math.sigmoid(y_pred), threshold)
   eq = tf.cast(y_pred == y_true, tf.float32) # Returns tensor with idx where predicted and actual values match
   acc = tf.reduce_mean(eq) # Accuracy value = average num of correct predictions
   return acc
@@ -64,7 +64,6 @@ class Normalizer(tf.Module):
     ''' This method un-normalizes the input data '''
     return (data * self.std) + self.mean
 
-
 class LogRegModel(tf.Module):
   def __init__(self):
     return
@@ -83,7 +82,6 @@ class LogRegModel(tf.Module):
     if train == True: return y_pred
     else: return tf.sigmoid(y_pred)
 
-
 class TrainingLoop(tf.Module):
   def __init__(self):
     self.losses = {'train':[], 'val':[], 'test':[]}
@@ -93,7 +91,9 @@ class TrainingLoop(tf.Module):
     return
 
   def train(self, train_data, val_data, test_data, num_epochs=200, learn_rate=0.01, model=None, output=False, tboard=False):
-    ''' This function runs the training loop on the inputted training data '''
+    '''
+    This function runs the training loop on the inputted training data
+    '''
     self.model = LogRegModel() if model is None else model
     self.num_epochs = num_epochs
     
@@ -110,7 +110,7 @@ class TrainingLoop(tf.Module):
         with tf.GradientTape() as tape:
           y_pred_batch = self.model(x_batch) # predictions from one particular batch
           batch_loss = log_loss(y_pred=y_pred_batch, y_true=y_batch) # loss value for this particular batch
-        batch_acc = accuracy(y_pred_batch, y_batch) # accuracy score for this particular batch
+        batch_acc = accuracy(y_pred_batch, y_batch, threshold=0.25) # accuracy score for this particular batch
 
         ## Update variables via gradient descent
         grads = tape.gradient(batch_loss, self.model.variables) # computed gradient
@@ -194,4 +194,22 @@ class TrainingLoop(tf.Module):
     
     print("Done.")
 
+  def get_losses(self):
+    return self.losses
   
+  def get_accs(self):
+    return self.accs
+  
+class ExportModule(tf.Module):
+  def __init__(self, model, normalizer, class_pred):
+    self.model = model
+    self.normalizer = normalizer
+    self.class_pred = class_pred
+    
+    @tf.function(input_signature=[tf.TensorSpec(shape=[None, None], dtype=tf.float32)])
+    def __call__(self, x):
+      # Run ExportModule for new data points
+      x = self.norm_x.norm(x)
+      y = self.model(x,train=False)
+      y = self.class_pred(y)
+      return y
