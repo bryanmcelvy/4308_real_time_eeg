@@ -32,7 +32,7 @@ def findNormDecay(x):
     x = np.array(x)
     W = len(x)
     
-    for i in np.linspace(start=1, stop=W-2, num=W-2, dtype=int):
+    for i in np.linspace(start=0, stop=W-2, num=W-2, dtype=int):
         D += indicatorFunc(x[i], x[i+1])
     
     D = D / (W-1)
