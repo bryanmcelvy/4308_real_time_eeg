@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: McElvy
+    given-names: Bryan
+title: "Towards a Real-Time Signal Analysis Pipeline for Classification of Epilepsy in Reduced-Channel EEG"
+version: 1.0.0
+date-released: 2022-12-28
